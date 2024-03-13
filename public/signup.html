@@ -1,0 +1,29 @@
+<!-- public/signup.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signup</title>
+  <style>
+    /* Basic styling */
+    /* CSS styling remains the same */
+  </style>
+</head>
+<body>
+  <form id="signupForm" action="/api/users/signup" method="post">
+    <h2>Signup</h2>
+    <input type="text" id="username" name="username" placeholder="Username" required>
+    <input type="password" id="password" name="password" placeholder="Password" required>
+    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+    <input type="email" id="email" name="email" placeholder="Email" required>
+    <button type="submit">Sign Up</button>
+    <p id="message"></p>
+  </form>
+
+  <!-- Optional: Add a link to navigate to the login page -->
+  <p>Already have an account? <a href="login.html">Login here</a></p>
+</body>
+</html>
+

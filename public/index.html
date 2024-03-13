@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Node.js Login & Signup</title>
+  <style>
+    /* Basic styling */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    form {
+      width: 300px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <form id="authForm">
+    <h2>Node.js Login & Signup</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button type="button" onclick="signup()">Sign Up</button><br><br>
+    <button type="button" onclick="login()">Login</button>
+    <p id="message"></p>
+  </form>
+
+  <script>
+    // Function to make API requests
+    async function makeRequest(url, method, data) {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+      return response.json();
+    }
+
+    // Signup function
+    async function signup() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const response = await makeRequest('http://localhost:3000/api/users/signup', 'POST', { username, password });
+      document.getElementById('message').innerText = response.message;
+    }
+
+    // Login function
+    async function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const response = await makeRequest('http://localhost:3000/api/users/login', 'POST', { username, password });
+      document.getElementById('message').innerText = response.message;
+      if (response.token) {
+        localStorage.setItem('token', response.token); // Store token in localStorage
+      }
+    }
+  </script>
+</body>
+</html>
+
