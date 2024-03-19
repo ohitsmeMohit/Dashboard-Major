@@ -75,7 +75,8 @@
       const response = await makeRequest('http://localhost:3000/api/users/signup', 'POST', { username, password, email });
       if (response.success) {
         // Redirect to the welcome page after successful signup
-        window.location.href = 'welcome.html';
+        document.getElementById('message').innerText = response.message;
+        window.location.href = 'login.html';
       } else {
         document.getElementById('message').innerText = response.message;
       }

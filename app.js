@@ -31,7 +31,47 @@ app.use('/api', protectedRoutes);
 
 // Route to serve the HTML file
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
+// Fetch account balance
+app.get('/balance', async (req, res) => {
+  try {
+    // Fetch balance from MongoDB (replace this with actual logic)
+    const user = await User.findOne({ username: req.query.username });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ balance: user.balance });
+  } catch (error) {
+    console.error('Error fetching balance:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// Send money
+app.post('/send-money', async (req, res) => {
+  try {
+    const { receiverUsername, amount } = req.body;
+    // Logic to send money (replace this with actual logic)
+    // For example:
+    const sender = await User.findOne({ username: req.body.senderUsername });
+    const receiver = await User.findOne({ username: receiverUsername });
+    if (!sender || !receiver) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    if (sender.balance < amount) {
+      return res.status(400).json({ message: 'Insufficient balance' });
+    }
+    sender.balance -= amount;
+    receiver.balance += amount;
+    await sender.save();
+    await receiver.save();
+    res.send('Money sent successfully');
+  } catch (error) {
+    console.error('Error sending money:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
 });
 
 

@@ -72,6 +72,11 @@
       document.getElementById('message').innerText = response.message;
       if (response.token) {
         localStorage.setItem('token', response.token); // Store token in localStorage
+        // Redirect to welcome.html after successful login
+        window.location.href = 'welcome.html';
+      } else {
+        // Display error message if login fails
+        document.getElementById('message').innerText = 'Login failed. Please check your username and password.';
       }
     }
   </script>
