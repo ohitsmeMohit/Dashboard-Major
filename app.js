@@ -3,13 +3,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path'); 
-
+const session = require('express-session'); 
+const isAuthenticated = require('./middleware/authenticationMiddleware');
 
 const app = express();
 
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Connect to MongoDB
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/MajorProject', {
@@ -21,18 +24,45 @@ mongoose.connect('mongodb://localhost:27017/MajorProject', {
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Configure express-session middleware
+app.use(session({
+  secret: 'helloworld', // Change this to a random string
+  resave: false,
+  saveUninitialized: false
+}));
+
 // Routes
 const usersRouter = require('./routes/users');
 app.use('/api/users', usersRouter);
 
-
 const protectedRoutes = require('./routes/protected');
 app.use('/api', protectedRoutes);
 
-// Route to serve the HTML file
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
+// Middleware to protect routes that require authentication
+app.use('/welcome.html', isAuthenticated); // Apply middleware to protect welcome.html route
+app.get('/welcome.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'welcome.html'));
 });
+
+// Route to handle root URL (/)
+app.get('/', (req, res) => {
+  // Check if user is authenticated
+  if (req.session && req.session.user) {
+    // User is authenticated, redirect to welcome.html
+    res.redirect('/welcome.html');
+  } else {
+    // User is not authenticated, redirect to login.html
+    res.redirect('/login.html');
+  }
+});
+
+// const protectedRoutes = require('./routes/protected');
+// app.use('/api', protectedRoutes);
+
+// // Route to serve the HTML file
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'public', 'login.html'));
+// });
 
 // Fetch account balance
 app.get('/balance', async (req, res) => {
@@ -73,7 +103,6 @@ app.post('/send-money', async (req, res) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
-
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

@@ -51,19 +51,30 @@ router.post('/login', async (req, res) => {
     if (!isValidPassword) {
       throw new Error('Invalid username or password');
     }
-    const token = jwt.sign({ userId: user._id }, 'your_secret_key', { expiresIn: '1h' });
-    res.json({ message: 'Login successful', token });
-    // Set token as cookie
-    res.cookie('token', token, { httpOnly: true });
-
-    // Redirect to dashboard page after successful login
-    // res.redirect('/dashboard.html');
+    // Create session data
+    req.session.user = {
+      _id: user._id,
+      username: user.username,
+      email: user.email
+    };
     res.json({ message: 'Login successful' });
-  }
-   catch (error) {
+  } catch (error) {
     res.status(401).json({ error: error.message });
   }
 });
 
+// Logout
+router.post('/logout', (req, res) => {
+  // Destroy session
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error destroying session:', err);
+      res.status(500).json({ error: 'Internal Server Error' });
+    } else {
+      res.clearCookie('connect.sid'); // Clear session cookie
+      res.json({ message: 'Logout successful' });
+    }
+  });
+});
 module.exports = router;
 

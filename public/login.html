@@ -64,21 +64,27 @@
       return response.json();
     }
 
-    // Login function
-    async function login() {
-      const username = document.getElementById('username').value;
-      const password = document.getElementById('password').value;
+  async function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    try {
       const response = await makeRequest('http://localhost:3000/api/users/login', 'POST', { username, password });
-      document.getElementById('message').innerText = response.message;
+      console.log('Login response:', response); // Add this line for debugging
       if (response.token) {
         localStorage.setItem('token', response.token); // Store token in localStorage
         // Redirect to welcome.html after successful login
-        window.location.href = 'welcome.html';
+        window.location.replace('welcome.html');
       } else {
         // Display error message if login fails
         document.getElementById('message').innerText = 'Login failed. Please check your username and password.';
       }
+    } catch (error) {
+      // Handle network errors or server errors
+      console.error('Login error:', error);
+      document.getElementById('message').innerText = 'An error occurred during login. Please try again later.';
     }
+  }
+
   </script>
 </body>
 </html>
