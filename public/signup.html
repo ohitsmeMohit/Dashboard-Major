@@ -1,29 +1,87 @@
-<!-- public/signup.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Signup</title>
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signup</title>
+<style>
     /* Basic styling */
-    /* CSS styling remains the same */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    form {
+      width: 300px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    input {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <form id="signupForm" action="/api/users/signup" method="post">
-    <h2>Signup</h2>
-    <input type="text" id="username" name="username" placeholder="Username" required>
-    <input type="password" id="password" name="password" placeholder="Password" required>
+  <div id="signupContainer">
+<form id="signupForm" action="/api/users/signup" method="post" onsubmit="signup(event)">
+	<h2>Signup</h2>
+	<input type="text" id="username" name="username" placeholder="Username (alphanumeric only)" pattern="[a-zA-Z0-9]+" required>
+    <input type="password" id="password" name="password" placeholder="Password (min 8 characters)" minlength="8" required>
     <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
     <input type="email" id="email" name="email" placeholder="Email" required>
     <button type="submit">Sign Up</button>
-    <p id="message"></p>
-  </form>
+	<p id="message"></p>
+<p>Already have an account? <a href="login.html">Login here</a></p>
+</form>
+</div>
 
-  <!-- Optional: Add a link to navigate to the login page -->
-  <p>Already have an account? <a href="login.html">Login here</a></p>
+<script>
+  // Function to make API requests
+  async function makeRequest(url, method, data) {
+    const response = await fetch(url, {
+      method: method,
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+    return response.json();
+  }
+  // Signup function
+  async function signup(event) {
+      event.preventDefault(); // Prevent default form submission behavior
+      
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const email = document.getElementById('email').value;
+      const response = await makeRequest('http://localhost:3000/api/users/signup', 'POST', { username, password, email });
+      if (response.success) {
+        // Redirect to the welcome page after successful signup
+        document.getElementById('message').innerText = response.message;
+        window.location.href = 'login.html';
+      } else {
+        document.getElementById('message').innerText = response.message;
+      }
+    }
+</script>
 </body>
 </html>
 
