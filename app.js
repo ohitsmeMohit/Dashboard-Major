@@ -16,6 +16,7 @@ app.use(bodyParser.json());
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/MajorProject', {
+  // mongoose.connect('mongodb://mongo:27017/MajorProject', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => console.log('MongoDB connected'))
